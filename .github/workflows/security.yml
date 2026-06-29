@@ -27,3 +27,4 @@ jobs:
       - name: Ejecutar analisis de seguridad con Bandit
         run: |
           bandit -r . -x venv || true
+          
