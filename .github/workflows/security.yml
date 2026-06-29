@@ -1,4 +1,4 @@
-name: Security Pipeline
+name: Security Pipeline Bandit Report
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  bandit-scan:
+  bandit-report:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,20 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Ejecutar analisis de seguridad con Bandit
+      - name: Crear carpeta de reportes
+        run: |
+          mkdir -p reports
+
+      - name: Ejecutar Bandit y generar reporte TXT
+        run: |
+          bandit -r . -x venv -f txt -o reports/reporte_bandit.txt || true
+
+      - name: Mostrar resultado de Bandit en consola
         run: |
           bandit -r . -x venv || true
-          
+
+      - name: Subir reporte como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reporte-bandit-lab08
+          path: reports/reporte_bandit.txt
